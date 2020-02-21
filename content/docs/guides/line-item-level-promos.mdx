@@ -1,0 +1,30 @@
+---
+title: 'Line Item Level Promotions'
+section: 'Guides'
+---
+
+import { Link } from 'gatsby'
+
+## What are Line Item Level Promotions?
+
+In short, Line Item Level Promotions are promotions that, when evaluated, will have their calculated discount amount applied at the line item level rather than at the order level. 
+ - The `Promotion.EligibleExpression` will still be evaluated against the entire order. 
+ - When `LineItemLevel = true` on a given promotion `Promotion.ValueExpression` will be evaluated independently against every line item on the order when the promotion is applied.
+    - Once that value is calculated and stored, it will be displayed at the line item level under the new property `LineItem.PromotionDiscount` which is used used to calculate the `LineItem.LineTotal`.
+    - A new property `LineItem.LineSubtotal` was also introduced for displaying the pre-promotion discount price of the line item.
+
+
+##  When should Line Item Level Promotions be used?
+
+You should use Line Item Level Promotions when you need detailed information on how much of a promotion discount was applied to a given line item. One of the biggest limitations of Order level promotions is that there is no ability to determine which line items were eligible for the promotion and used to calculate the discount. 
+
+Having `PromotionDiscount` only available at the Order level can lead to a few potential problems, such as not being able to charge the appropriate amount of tax for a discounted item and not knowing how much to refund a customer who returns an item from an order where a promotion was used.
+
+
+## Are there any special requirements for Eligible and Value Expressions for these promotions?
+
+ There are no restrictions or changes on what is or isn’t allowed in the `EligibleExpression` for either type of promotion. You can setup a line item level promotion that evaluates on an order property, and vice versa; though there are a couple restrictions when it comes to `ValueExpression`:
+ - When `Promotion.LineItemLevel = true`, the `ValueExpression` must not contain any `order` or `items` statements or functions - only `item` statements can be used
+ - When `Promotion.LineItemLevel = false`, the `ValueExpression` must not contain any `item` statements or functions
+
+
